@@ -11,29 +11,29 @@ const Manager = () => {
     })
     const [passwordArray, setpasswordArray] = useState([])
     useEffect(() => {
-      let passwords = localStorage.getItem("passwords")
-      if(passwords){
-        setPasswordArray = JSON.parse(passwords)
-      }
+        let passwords = localStorage.getItem("passwords")
+        if (passwords) {
+            setPasswordArray = JSON.parse(passwords)
+        }
     }, [])
-    
+
 
     const showPassword = () => {
         // alert("showing the password")
-        if(ref.current.src.includes("public/icons8-closed-eye-30.png")){
+        if (ref.current.src.includes("public/icons8-closed-eye-30.png")) {
             ref.current.src = "public/icons8-eye-30.png"
-        }else{
+        } else {
             ref.current.src = "public/icons8-closed-eye-30.png"
         }
     }
 
     const savePassword = () => {
-      setpasswordArray([...passwordArray, form])
-      localStorage.setItem("password", JSON.stringify([...passwordArray, form]))
-      console.log([...passwordArray, form])
+        setpasswordArray([...passwordArray, form])
+        localStorage.setItem("password", JSON.stringify([...passwordArray, form]))
+        console.log([...passwordArray, form])
     }
     const handleChange = (e) => {
-      setform({...form, [e.target.name]: e.target.value})
+        setform({ ...form, [e.target.name]: e.target.value })
     }
 
     return (
@@ -59,7 +59,7 @@ const Manager = () => {
                             </span>
                         </div>
                     </div>
-                    
+
                     <button onClick={savePassword} className='flex justify-center items-center font-bold text-xl bg-purple-400 w-1/2 rounded-md hover:text-zinc-800 cursor-pointer'>
                         <DotLottieReact
                             src="https://lottie.host/20d051ef-b62f-4f76-aeca-29aabd812ab9/rnv66PY7C4.lottie"
@@ -69,6 +69,36 @@ const Manager = () => {
                         />
                         Add Password
                     </button>
+                </div>
+
+                <div className="passwords text-white w-full flex flex-col justify-center items-center my-10">
+                    <h2 className='text-purple-400 font-bold text-2xl py-5'>Your Passwords</h2>
+                    <table class="table-auto w-full rounded-md overflow-hidden">
+                        <thead className='bg-purple-700'>
+                            <tr>
+                                <th className='py-2'>Song</th>
+                                <th className='py-2'>Artist</th>
+                                <th className='py-2'>Year</th>
+                            </tr>
+                        </thead>
+                        <tbody className=' bg-zinc-900'>
+                            <tr className='text-center'>
+                                <td className='py-2 border border-white w-30'>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
+                                <td className='py-2 border border-white w-30'>Malcolm Lockyer</td>
+                                <td className='py-2 border border-white w-30'>1961</td>
+                            </tr>
+                            <tr className='text-center'>
+                                <td className='py-2 border border-white w-30'>Witchy Woman</td>
+                                <td className='py-2 border border-white w-30'>The Eagles</td>
+                                <td className='py-2 border border-white w-30'>1972</td>
+                            </tr>
+                            <tr className='text-center'>
+                                <td className='py-2 border border-white w-30'>Shining Star</td>
+                                <td className='py-2 border border-white w-30'>Earth, Wind, and Fire</td>
+                                <td className='py-2 border border-white w-30'>1975</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </>
