@@ -4,26 +4,35 @@ import { useRef, useState, useEffect } from 'react';
 
 const Manager = () => {
     const ref = useRef()
+    const passwordRef = useRef()
     const [form, setform] = useState({
         site: "",
         username: "",
         password: "",
     })
     const [passwordArray, setpasswordArray] = useState([])
+
     useEffect(() => {
         let passwords = localStorage.getItem("passwords")
         if (passwords) {
-            setPasswordArray = JSON.parse(passwords)
+            setPasswordArray(JSON.parse(passwords))
         }
     }, [])
 
+    const copyText= (text) =>{
+        navigator.clipboard.writeText(text)
+        alert("you copied " + text)
+    }
 
     const showPassword = () => {
         // alert("showing the password")
+        passwordRef.current.type = "text"
         if (ref.current.src.includes("public/icons8-closed-eye-30.png")) {
             ref.current.src = "public/icons8-eye-30.png"
+            passwordRef.current.type = "password"
         } else {
             ref.current.src = "public/icons8-closed-eye-30.png"
+            passwordRef.current.type = "text"
         }
     }
 
@@ -53,7 +62,7 @@ const Manager = () => {
                     <div className="flex w-full justify-between gap-5">
                         <input value={form.username} onChange={handleChange} placeholder='Enter username or email' className='p-2 border border-purple-400 w-1/2 rounded-md' type="text" name="username" id="" />
                         <div className="relative w-1/2">
-                            <input value={form.password} onChange={handleChange} placeholder='Enter Password' className='p-2 border border-purple-400 w-full rounded-md' type="text" name="password" id="" />
+                            <input ref={passwordRef} value={form.password} onChange={handleChange} placeholder='Enter Password' className='p-2 border border-purple-400 w-full rounded-md' type="password" name="password" id="" />
                             <span className='absolute right-2 top-2.5 cursor-pointer' onClick={showPassword}>
                                 <img ref={ref} width={20} src="public/icons8-eye-30.png" alt="" />
                             </span>
@@ -73,32 +82,48 @@ const Manager = () => {
 
                 <div className="passwords text-white w-full flex flex-col justify-center items-center my-10">
                     <h2 className='text-purple-400 font-bold text-2xl py-5'>Your Passwords</h2>
-                    <table class="table-auto w-full rounded-md overflow-hidden">
-                        <thead className='bg-purple-700'>
-                            <tr>
-                                <th className='py-2'>Song</th>
-                                <th className='py-2'>Artist</th>
-                                <th className='py-2'>Year</th>
-                            </tr>
-                        </thead>
-                        <tbody className=' bg-zinc-900'>
-                            <tr className='text-center'>
-                                <td className='py-2 border border-white w-30'>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-                                <td className='py-2 border border-white w-30'>Malcolm Lockyer</td>
-                                <td className='py-2 border border-white w-30'>1961</td>
-                            </tr>
-                            <tr className='text-center'>
-                                <td className='py-2 border border-white w-30'>Witchy Woman</td>
-                                <td className='py-2 border border-white w-30'>The Eagles</td>
-                                <td className='py-2 border border-white w-30'>1972</td>
-                            </tr>
-                            <tr className='text-center'>
-                                <td className='py-2 border border-white w-30'>Shining Star</td>
-                                <td className='py-2 border border-white w-30'>Earth, Wind, and Fire</td>
-                                <td className='py-2 border border-white w-30'>1975</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    {passwordArray.length === 0 && <div>No passwords to show</div>}
+                    {passwordArray.length != 0 &&
+                        <table class="table-auto w-full rounded-md overflow-hidden">
+                            <thead className='bg-purple-700'>
+                                <tr>
+                                    <th className='py-2'>Site URL</th>
+                                    <th className='py-2'>Username</th>
+                                    <th className='py-2'>Password</th>
+                                </tr>
+                            </thead>
+                            <tbody className=' bg-zinc-900'>
+                                {passwordArray.map((item, index) => {
+                                    return <tr key={index} className='text-center'>
+                                        <td className='py-2'>
+                                            <div className='flex items-center justify-center' onClick={()=>{copyText(item.site)}}>
+                                                <a href={item.site} target='_blank'>{item.site}</a>
+                                                <div className='cursor-pointer'>
+                                                    <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className='py-2'>
+                                            <div className='flex items-center justify-center' onClick={()=>{copyText(item.username)}}>
+                                                <span>{item.username}</span>
+                                                <div className='cursor-pointer'>
+                                                    <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className='py-2'>
+                                            <div className='flex items-center justify-center' onClick={()=>{copyText(item.password)}}>
+                                                <span>{item.password}</span>
+                                                <div className='cursor-pointer'>
+                                                    <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                })}
+                            </tbody>
+                        </table>
+                    }
                 </div>
             </div>
         </>
