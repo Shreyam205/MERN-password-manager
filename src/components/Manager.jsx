@@ -38,30 +38,45 @@ const Manager = () => {
     const showPassword = () => {
         // alert("showing the password")
         passwordRef.current.type = "text"
-        if (ref.current.src.includes("public/icons8-closed-eye-30.png")) {
-            ref.current.src = "public/icons8-eye-30.png"
+        if (ref.current.src.includes("public/icons/icons8-closed-eye-30.png")) {
+            ref.current.src = "public/icons/icons8-eye-30.png"
             passwordRef.current.type = "password"
         } else {
-            ref.current.src = "public/icons8-closed-eye-30.png"
+            ref.current.src = "public/icons/icons8-closed-eye-30.png"
             passwordRef.current.type = "text"
         }
     }
 
     const savePassword = () => {
-        setpasswordArray([...passwordArray, { ...form, id: uuidv4() }])
-        setform({ site: "", username: "", password: "" })
-        localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
-        console.log([...passwordArray, form])
-        toast('Password Saved!', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-        });
+        if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
+            setpasswordArray([...passwordArray, { ...form, id: uuidv4() }])
+            setform({ site: "", username: "", password: "" })
+            localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
+            console.log([...passwordArray, form])
+            toast('Password Saved!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
+        else {
+            toast('Error: Password not saved', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            })
+        }
+
     }
     const deletePassword = (id) => {
         console.log("Deleting", id);
@@ -163,7 +178,7 @@ const Manager = () => {
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.site) }}>
                                                 <a href={item.site} target='_blank'>{item.site}</a>
                                                 <div className='cursor-pointer'>
-                                                    <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
+                                                    <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
                                             </div>
                                         </td>
@@ -171,7 +186,7 @@ const Manager = () => {
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.username) }}>
                                                 <span>{item.username}</span>
                                                 <div className='cursor-pointer'>
-                                                    <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
+                                                    <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
                                             </div>
                                         </td>
@@ -179,7 +194,7 @@ const Manager = () => {
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.password) }}>
                                                 <span>{item.password}</span>
                                                 <div className='cursor-pointer'>
-                                                    <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
+                                                    <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
                                             </div>
                                         </td>
