@@ -119,7 +119,7 @@ const Manager = () => {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="light"
+                theme="Dark"
                 transition="Bounce"
             />
             <ToastContainer />
