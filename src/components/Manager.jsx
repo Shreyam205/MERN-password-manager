@@ -1,6 +1,8 @@
 import React from 'react'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useRef, useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 const Manager = () => {
     const ref = useRef()
@@ -15,13 +17,22 @@ const Manager = () => {
     useEffect(() => {
         let passwords = localStorage.getItem("passwords")
         if (passwords) {
-            setPasswordArray(JSON.parse(passwords))
+            setpasswordArray(JSON.parse(passwords))
         }
     }, [])
 
-    const copyText= (text) =>{
+    const copyText = (text) => {
+        toast('Copied to clipboard!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
         navigator.clipboard.writeText(text)
-        alert("you copied " + text)
     }
 
     const showPassword = () => {
@@ -37,16 +48,46 @@ const Manager = () => {
     }
 
     const savePassword = () => {
-        setpasswordArray([...passwordArray, form])
-        localStorage.setItem("password", JSON.stringify([...passwordArray, form]))
+        setpasswordArray([...passwordArray, { ...form, id: uuidv4() }])
+        setform({site: "", username: "", password: "" })
+        localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
         console.log([...passwordArray, form])
     }
+    const deletePassword = (id) => {
+        console.log("Deleting", id);
+        let c = confirm("Do you really want to delete this password?")
+        if (c) {
+            setpasswordArray(passwordArray.filter(item => (item.id) !== id))
+            localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => (item.id) !== id)))
+        }
+    }
+    const editPassword = (id) => {
+        console.log("Editing", id);
+        setform(passwordArray.filter(i => i.id === id)[0])
+        setpasswordArray(passwordArray.filter(item => (item.id) !== id))
+    }
+
+
     const handleChange = (e) => {
         setform({ ...form, [e.target.name]: e.target.value })
     }
 
     return (
         <>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition="Bounce"
+            />
+            <ToastContainer />
             <div className="absolute top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
             <div className="conatiner mx-auto py-10 flex flex-col gap-5 max-w-6xl">
@@ -84,19 +125,20 @@ const Manager = () => {
                     <h2 className='text-purple-400 font-bold text-2xl py-5'>Your Passwords</h2>
                     {passwordArray.length === 0 && <div>No passwords to show</div>}
                     {passwordArray.length != 0 &&
-                        <table class="table-auto w-full rounded-md overflow-hidden">
+                        <table className="table-auto w-full rounded-md overflow-hidden">
                             <thead className='bg-purple-700'>
                                 <tr>
                                     <th className='py-2'>Site URL</th>
                                     <th className='py-2'>Username</th>
                                     <th className='py-2'>Password</th>
+                                    <th className='py-2'>Actions</th>
                                 </tr>
                             </thead>
                             <tbody className=' bg-zinc-900'>
                                 {passwordArray.map((item, index) => {
                                     return <tr key={index} className='text-center'>
                                         <td className='py-2'>
-                                            <div className='flex items-center justify-center' onClick={()=>{copyText(item.site)}}>
+                                            <div className='flex items-center justify-center' onClick={() => { copyText(item.site) }}>
                                                 <a href={item.site} target='_blank'>{item.site}</a>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
@@ -104,7 +146,7 @@ const Manager = () => {
                                             </div>
                                         </td>
                                         <td className='py-2'>
-                                            <div className='flex items-center justify-center' onClick={()=>{copyText(item.username)}}>
+                                            <div className='flex items-center justify-center' onClick={() => { copyText(item.username) }}>
                                                 <span>{item.username}</span>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
@@ -112,11 +154,31 @@ const Manager = () => {
                                             </div>
                                         </td>
                                         <td className='py-2'>
-                                            <div className='flex items-center justify-center' onClick={()=>{copyText(item.password)}}>
+                                            <div className='flex items-center justify-center' onClick={() => { copyText(item.password) }}>
                                                 <span>{item.password}</span>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
+                                            </div>
+                                        </td>
+                                        <td className='py-2'>
+                                            <div className="flex justify-center items-center">
+                                                <span className='cursor-pointer' onClick={() => { editPassword(item.id) }}>
+                                                    <DotLottieReact
+                                                        src="https://lottie.host/1c069aab-8f16-46e3-8ee6-f05f0cd3139e/gZvOcMx3w7.lottie"
+                                                        loop
+                                                        autoplay
+                                                        className='w-13'
+                                                    />
+                                                </span>
+                                                <span className='cursor-pointer' onClick={() => { deletePassword(item.id) }}>
+                                                    <DotLottieReact
+                                                        src="https://lottie.host/0d22dd89-de2d-4245-b859-a6ec2c186e0a/rA3gFAqEv8.lottie"
+                                                        loop
+                                                        autoplay
+                                                        className='w-15'
+                                                    />
+                                                </span>
                                             </div>
                                         </td>
                                     </tr>
