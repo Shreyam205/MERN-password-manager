@@ -176,7 +176,7 @@ const Manager = () => {
                                     return <tr key={index} className='text-center'>
                                         <td className='py-2 w-1/4'>
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.site) }}>
-                                                <a href={item.site} target='_blank'>{item.site}</a>
+                                                <p className=' truncate w-1/2'><a href={item.site} target='_blank'>{item.site}</a></p>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
@@ -184,7 +184,7 @@ const Manager = () => {
                                         </td>
                                         <td className='py-2 w-1/4'>
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.username) }}>
-                                                <span>{item.username}</span>
+                                                <p className=' truncate w-1/2'><span>{item.username}</span></p>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
@@ -192,7 +192,7 @@ const Manager = () => {
                                         </td>
                                         <td className='py-2 w-1/4'>
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.password) }}>
-                                                <span>{item.password}</span>
+                                                <p className=' truncate w-1/2'><span>{item.password}</span></p>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
