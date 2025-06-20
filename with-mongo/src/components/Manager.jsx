@@ -3,6 +3,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useRef, useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Manager = () => {
     const ref = useRef()
@@ -14,11 +15,15 @@ const Manager = () => {
     })
     const [passwordArray, setpasswordArray] = useState([])
 
+    const getPasswords = async () => {
+        let req = await fetch("http://localhost:3000/")
+        let passwords = await req.json()
+        setpasswordArray(passwords)
+    }
+
+
     useEffect(() => {
-        let passwords = localStorage.getItem("passwords")
-        if (passwords) {
-            setpasswordArray(JSON.parse(passwords))
-        }
+        getPasswords()
     }, [])
 
     const copyText = (text) => {
@@ -47,11 +52,15 @@ const Manager = () => {
         }
     }
 
-    const savePassword = () => {
+    const savePassword = async () => {
         if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
+            
+            await fetch("http://localhost:3000/", {method: "DELETE", headers:{ "Content-Type": "application/json"}, body: JSON.stringify({id: form.id})})
+            
             setpasswordArray([...passwordArray, { ...form, id: uuidv4() }])
+            await fetch("http://localhost:3000/", {method: "POST", headers:{ "Content-Type": "application/json"}, body: JSON.stringify({...form, id: uuidv4() }) })
             setform({ site: "", username: "", password: "" })
-            localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
+            // localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
             // console.log([...passwordArray, form])
             toast('Password Saved!', {
                 position: "top-right",
@@ -78,12 +87,14 @@ const Manager = () => {
         }
 
     }
-    const deletePassword = (id) => {
+    const deletePassword = async (id) => {
         console.log("Deleting", id);
         let c = confirm("Do you really want to delete this password?")
         if (c) {
-            setpasswordArray(passwordArray.filter(item => (item.id) !== id))
-            localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => (item.id) !== id)))
+            setpasswordArray(passwordArray.filter(item => item.id !== id))
+            
+            await fetch("http://localhost:3000/", {method: "DELETE", headers:{ "Content-Type": "application/json"}, body: JSON.stringify({id})})
+            // localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => (item.id) !== id)))
             toast('Password Deleted!', {
                 position: "top-right",
                 autoClose: 5000,
@@ -96,10 +107,10 @@ const Manager = () => {
             });
         }
     }
-    const editPassword = (id) => {
-        console.log("Editing", id);
-        setform(passwordArray.filter(i => i.id === id)[0])
-        setpasswordArray(passwordArray.filter(item => (item.id) !== id))
+    const editPassword = async (id) => {
+        // console.log("Editing", id);
+        setform({ ...passwordArray.filter(i => i.id === id)[0], id: id})
+        setpasswordArray(passwordArray.filter(item => item.id !== id))
     }
 
 
@@ -192,7 +203,7 @@ const Manager = () => {
                                         </td>
                                         <td className='py-2 w-1/4'>
                                             <div className='flex items-center justify-center' onClick={() => { copyText(item.password) }}>
-                                                <p className=' truncate w-1/2'><span>{item.password}</span></p>
+                                                <p className=' truncate w-1/2'><span>{"*".repeat(item.password.length)}</span></p>
                                                 <div className='cursor-pointer'>
                                                     <img className='w-6' src="public/icons/icons8-copy-64.png" alt="copy_site" />
                                                 </div>
